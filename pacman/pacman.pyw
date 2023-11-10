@@ -30,11 +30,11 @@ USER_NAME="User" # USER_NAME=os.getlogin() # the default user name if wx fails t
 JS_DEVNUM=0 # device 0 (pygame joysticks always start at 0). if JS_DEVNUM is not a valid device, will use 0
 JS_XAXIS=0 # axis 0 for left/right (default for most joysticks)
 JS_YAXIS=1 # axis 1 for up/down (default for most joysticks)
-JS_STARTBUTTON=0 # button number to start the game. this is a matter of personal preference, and will vary from device to device
-
+JS_STARTBUTTON=9 # button number to start the game. this is a matter of personal preference, and will vary from device to device
+JS_MIN_TH = 0.5 # minimal threshold to convert joystick movement into a command
+JS_DEBUG = False
 # Must come before pygame.init()
 pygame.mixer.pre_init(22050,16,2,512)
-JS_STARTBUTTON=0 # button number to start the game. this is a matter of personal preference, and will vary from device to device
 pygame.mixer.init()
 
 clock = pygame.time.Clock()
@@ -1345,22 +1345,32 @@ def CheckIfCloseButton(events):
 def CheckInputs():
 
     if thisGame.mode == 1:
-        if pygame.key.get_pressed()[ pygame.K_RIGHT ] or (js!=None and js.get_axis(JS_XAXIS)>0):
+        if js!=None and JS_DEBUG:
+            print(js.get_axis(JS_XAXIS), js.get_axis(JS_YAXIS))
+        if pygame.key.get_pressed()[ pygame.K_RIGHT ] or (js!=None and js.get_axis(JS_XAXIS)>JS_MIN_TH):
+            if JS_DEBUG:
+                print('RIGHT')
             if not thisLevel.CheckIfHitWall(player.x + player.speed, player.y, player.nearestRow, player.nearestCol):
                 player.velX = player.speed
                 player.velY = 0
 
-        elif pygame.key.get_pressed()[ pygame.K_LEFT ] or (js!=None and js.get_axis(JS_XAXIS)<0):
+        elif pygame.key.get_pressed()[ pygame.K_LEFT ] or (js!=None and js.get_axis(JS_XAXIS)<-JS_MIN_TH):
+            if JS_DEBUG:
+                print('LEFT')
             if not thisLevel.CheckIfHitWall(player.x - player.speed, player.y, player.nearestRow, player.nearestCol):
                 player.velX = -player.speed
                 player.velY = 0
 
-        elif pygame.key.get_pressed()[ pygame.K_DOWN ] or (js!=None and js.get_axis(JS_YAXIS)>0):
+        elif pygame.key.get_pressed()[ pygame.K_DOWN ] or (js!=None and js.get_axis(JS_YAXIS)>JS_MIN_TH):
+            if JS_DEBUG:
+                print('DOWN')
             if not thisLevel.CheckIfHitWall(player.x, player.y + player.speed, player.nearestRow, player.nearestCol):
                 player.velX = 0
                 player.velY = player.speed
 
-        elif pygame.key.get_pressed()[ pygame.K_UP ] or (js!=None and js.get_axis(JS_YAXIS)<0):
+        elif pygame.key.get_pressed()[ pygame.K_UP ] or (js!=None and js.get_axis(JS_YAXIS)<-JS_MIN_TH):
+            if JS_DEBUG:
+                print('UP')
             if not thisLevel.CheckIfHitWall(player.x, player.y - player.speed, player.nearestRow, player.nearestCol):
                 player.velX = 0
                 player.velY = -player.speed
@@ -1464,7 +1474,7 @@ thisGame = game()
 thisLevel = level()
 thisLevel.LoadLevel( thisGame.GetLevelNum() )
 
-window = pygame.display.set_mode( thisGame.screenSize, pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE )
+window = pygame.display.set_mode( thisGame.screenSize, pygame.DOUBLEBUF | pygame.HWSURFACE )
 
 # initialise the joystick
 if pygame.joystick.get_count()>0:
