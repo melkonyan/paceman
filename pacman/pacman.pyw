@@ -40,7 +40,7 @@ pygame.mixer.init()
 clock = pygame.time.Clock()
 pygame.init()
 
-window = pygame.display.set_mode((1, 1))
+window = pygame.display.set_mode((0, 0), pygame.FULLSCREEN)
 pygame.display.set_caption("PACEman")
 
 screen = pygame.display.get_surface()
@@ -579,7 +579,7 @@ class ghost ():
         # for y in range(pupilSet[1], pupilSet[1] + 2, 1):
         #     for x in range(pupilSet[0], pupilSet[0] + 2, 1):
         #         self.anim[ self.animFrame ].set_at( (x, y), (0, 0, 255, 255) )
-        #         self.anim[ self.animFrame ].set_at( (x+6, y), (0, 0, 255, 255) )    
+        #         self.anim[ self.animFrame ].set_at( (x+6, y), (0, 0, 255, 255) )
         # -- end ghost eyes
 
         if self.state == 1:
@@ -1464,7 +1464,7 @@ thisGame = game()
 thisLevel = level()
 thisLevel.LoadLevel( thisGame.GetLevelNum() )
 
-window = pygame.display.set_mode( thisGame.screenSize, pygame.DOUBLEBUF | pygame.HWSURFACE )
+window = pygame.display.set_mode( thisGame.screenSize, pygame.FULLSCREEN | pygame.DOUBLEBUF | pygame.HWSURFACE )
 
 # initialise the joystick
 if pygame.joystick.get_count()>0:
